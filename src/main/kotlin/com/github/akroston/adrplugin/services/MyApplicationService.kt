@@ -1,6 +1,6 @@
-package org.jetbrains.plugins.template.services
+package com.github.akroston.adrplugin.services
 
-import org.jetbrains.plugins.template.MyBundle
+import com.github.akroston.adrplugin.MyBundle
 
 class MyApplicationService {
 
