@@ -27,12 +27,16 @@ repositories {
     mavenCentral()
 }
 dependencies {
+    implementation("org.jetbrains:markdown:0.2.3")
     detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.17.1")
+
 }
 
 // Configure gradle-intellij-plugin plugin.
 // Read more: https://github.com/JetBrains/gradle-intellij-plugin
 intellij {
+
+    //org.intellij.plugins.markdown
     pluginName.set(properties("pluginName"))
     version.set(properties("platformVersion"))
     type.set(properties("platformType"))
