@@ -84,10 +84,10 @@ class RunLineMarkerInfo(
 ) {
     override fun createGutterRenderer(): GutterIconRenderer? {
         return object : LineMarkerGutterIconRenderer<PsiElement>(this) {
-            override fun getClickAction(): AnAction? {
-                val label = findChildElement(element, MarkdownTokenTypeSets.LINK_LABEL, null)
-                val labelStr: String? = label?.text
 
+            override fun getClickAction(): AnAction? {
+                // val label = findChildElement(element, MarkdownTokenTypeSets.LINK_LABEL, null)
+                val labelStr: String? = element?.parent?.firstChild?.text
                 return element?.let { OpenChooserAndReplaceAction(labelStr, it) }
             }
 
@@ -103,20 +103,30 @@ class RunLineMarkerInfo(
     }
 }
 
-class OpenChooserAndReplaceAction(val label: String?, val element: PsiElement) : AnAction() {
+class OpenChooserAndReplaceAction(private val label: String?, private val element: PsiElement) : AnAction() {
 
     override fun actionPerformed(event: AnActionEvent) {
-        val project: Project = event.getRequiredData<Project>(CommonDataKeys.PROJECT)
-        var dialog = ChoicesDialogWrapper(label)
-        when(label){
-            "Deciders" -> dialog=ChoicesDialogWrapper(label)
-            "Status" -> dialog=ChoicesDialogWrapper(label)
+        val project: Project = event.getRequiredData(CommonDataKeys.PROJECT)
+        val dialog: DialogWrapper = when (label) {
+            "Deciders", "Status" -> ChoicesDialogWrapper(label)
+            else -> TextAreaDialogWrapper(label)
         }
         dialog.show()
 
         if (dialog.isOK) {
-            val sel = dialog.jbList.selectedValuesList
-            val toShow: String = sel.joinToString(",").trim()
+            var toShow: String = "";
+            toShow = when (dialog) {
+                is ChoicesDialogWrapper -> {
+                    val sel = dialog.jbList.selectedValuesList
+                    sel.joinToString(",").trim()
+                }
+                is TextAreaDialogWrapper -> {
+                    dialog.textArea.text
+                }
+                else -> {
+                    ""
+                }
+            }
             val f: PsiFile = MarkdownPsiElementFactory.createFile(project, toShow)
             WriteCommandAction.runWriteCommandAction(
                 project
@@ -125,7 +135,7 @@ class OpenChooserAndReplaceAction(val label: String?, val element: PsiElement) :
     }
 }
 
-class ChoicesDialogWrapper(val label: String?) : DialogWrapper(true) {
+class ChoicesDialogWrapper(private val label: String?) : DialogWrapper(true) {
 
     val jbList = JBList<String>()
 
@@ -133,16 +143,40 @@ class ChoicesDialogWrapper(val label: String?) : DialogWrapper(true) {
     override fun createCenterPanel(): JComponent? {
 
         val settings = ServiceManager.getService(AppSettingsState::class.java)
-        val deciders = settings.deciders
-        val model: ListModel<String> = CollectionListModel(deciders)
+        val mod = when (label) {
+            "Deciders" -> settings.deciders
+            "Status" -> settings.status
+            else -> null
+        } ?: return JPanel()
+        val model: ListModel<String> = CollectionListModel(mod)
 
         jbList.model = model
-        jbList.selectedIndices = intArrayOf(0, 1, 2)
+        //jbList.selectedIndices = intArrayOf(0, 1, 2)
         jbList.selectionMode = ListSelectionModel.MULTIPLE_INTERVAL_SELECTION
 
         val panel: JPanel = panel {
             row(label) {
                 jbList()
+            }
+        }
+        return panel
+    }
+
+    init {
+        init()
+        title = "Choose Wisely"
+    }
+}
+
+class TextAreaDialogWrapper(private val label: String?) : DialogWrapper(true) {
+    val textArea = JTextArea(20,60)
+
+    @Nullable
+    override fun createCenterPanel(): JComponent? {
+
+        val panel: JPanel = panel {
+            row(label) {
+                textArea()
             }
         }
         return panel
