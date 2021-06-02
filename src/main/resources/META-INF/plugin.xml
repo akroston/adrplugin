@@ -26,11 +26,11 @@
                   topic="com.intellij.openapi.project.ProjectManagerListener"/>
     </applicationListeners>
     <actions>
-        <action id="com.github.akroston.adrplugin.actions.ProcessMDLineAction"
-                class="com.github.akroston.adrplugin.actions.ProcessMDLineAction" text="AdrDialog"
-                description="Fill in adr line via an input dialog">
-            <add-to-group group-id="ToolsMenu" anchor="first"/>
-            <keyboard-shortcut keymap="$default" first-keystroke="meta alt F"/>
-        </action>
+<!--        <action id="com.github.akroston.adrplugin.actions.ProcessMDLineAction"-->
+<!--                class="com.github.akroston.adrplugin.actions.ProcessMDLineAction" text="AdrDialog"-->
+<!--                description="Fill in adr line via an input dialog">-->
+<!--            <add-to-group group-id="ToolsMenu" anchor="first"/>-->
+<!--            <keyboard-shortcut keymap="$default" first-keystroke="meta alt F"/>-->
+<!--        </action>-->
     </actions>
 </idea-plugin>

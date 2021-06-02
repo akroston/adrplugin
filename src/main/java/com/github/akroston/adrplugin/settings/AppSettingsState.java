@@ -26,11 +26,18 @@ public class AppSettingsState implements PersistentStateComponent<AppSettingsSta
 
     static class State {
         public ArrayList<String> deciders = new ArrayList<String>(Arrays.asList("Adrian", "Zack", "Shan"));
+        public ArrayList<String> status = new ArrayList<String>(Arrays.asList("draft",
+                "proposed", "rejected", "accepted", "deprecated"));
     }
 
-    public ArrayList<String> getDeciders(){
+    public ArrayList<String> getDeciders() {
         return myState.deciders;
     }
+
+    public ArrayList<String> getStatus() {
+        return myState.status;
+    }
+
     private State myState = new State();
 
     public State getState() {
@@ -41,12 +48,5 @@ public class AppSettingsState implements PersistentStateComponent<AppSettingsSta
         myState = state;
     }
 
-
-    /*
-    @Override
-    public void loadState(@NotNull AppSettingsState state) {
-        XmlSerializerUtil.copyBean(state, this);
-    }
-*/
 }
 

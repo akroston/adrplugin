@@ -48,6 +48,7 @@ public class AppSettingsConfigurable implements Configurable {
     public void apply() {
         AppSettingsState settings = ServiceManager.getService(AppSettingsState.class);
         settings.getState().deciders = new ArrayList<>( mySettingsComponent.getDeciderModel().getItems());
+        settings.getState().status = new ArrayList<>( mySettingsComponent.getStatusModel().getItems());
     }
 
     @Override
